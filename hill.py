@@ -45,7 +45,6 @@ def OdeReact(t0,t1,X0, dp,par):
     
 # first step
 
-#param = k,k2,k3,g1,g2,g3,du,mu,te,n
 X0 = np.array([0.1, 1, .1, .1])
 time1, MA1, sp1, p1 = OdeReact(0,tmul,X0,dp,par)
 
@@ -53,14 +52,12 @@ time1, MA1, sp1, p1 = OdeReact(0,tmul,X0,dp,par)
 # second step
 
 dp[par] = dp[par]*10
-#param = k,k2,k3,g1,g2,g3,du,mu,te,n
 time2, MA2, sp2, p2 = OdeReact(tmul,2*tmul,MA1[-1],dp,par)
 
 
 # Third step
 
 dp[par] = dp[par]*.01
-#param = k,k2,k3,g1,g2,g3,du,mu,te,n
 time3, MA3, sp3, p3 = OdeReact(2*tmul,3*tmul,MA2[-1],dp,par)
 
 

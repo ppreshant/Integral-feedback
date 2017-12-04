@@ -13,10 +13,13 @@ import matplotlib.pyplot as plt
 # Rate constants
 k = 1; k2 = 1; k3 = 1;
 g1 = 2; g2 = 3; g3 = 1;
-du = 1; n = 50
+du = 1; 
+# control parameters
+n = 10
 mu = 3; te = 1; 
 
-par = 'mu' # parameter of interest
+tmul = 100 ; # time to equilibriate the disturbances
+par = 'k2' # parameter of interest
 dp = {'k': k,'k2': k2,'k3': k3,'g1': g1,'g2': g2,'g3': g3,'du' : du, 'mu' : mu,'te':te,'n' : n} # dictionary with all parameters
 
 # Solving the ODEs for the reaction given the rate consts
@@ -45,23 +48,20 @@ def OdeReact(t0,t1,X0, dp,par):
     
 # first step
 
-#param = k,k2,k3,g1,g2,g3,du,mu,te,n
-X0 = np.array([0, 0, 0, 0.1, 0.1])
-time1, MA1, sp1, p1 = OdeReact(0,100,X0,dp,par)
+X0 = np.array([0.1, 1, .1, .1, .1])
+time1, MA1, sp1, p1 = OdeReact(0,tmul,X0,dp,par)
 
 
 # second step
 
 dp[par] = dp[par]*10
-#param = k,k2,k3,g1,g2,g3,du,mu,te,n
-time2, MA2, sp2, p2 = OdeReact(100,150,MA1[-1],dp,par)
+time2, MA2, sp2, p2 = OdeReact(tmul,2*tmul,MA1[-1],dp,par)
 
 
 # Third step
 
-dp[par] = dp[par]*.1
-#param = k,k2,k3,g1,g2,g3,du,mu,te,n
-time3, MA3, sp3, p3 = OdeReact(150,200,MA2[-1],dp,par)
+dp[par] = dp[par]*.01
+time3, MA3, sp3, p3 = OdeReact(2*tmul,3*tmul,MA2[-1],dp,par)
 
 
 # Pack all steps into 1 vector / matrix 
@@ -76,7 +76,7 @@ plt.ylabel('Y(t)')
 plt.xlabel('Time (s)')
 plt.plot(tf,spf,'--k', linewidth=1)
 plt.plot(tf,pf,':r', linewidth=2)
-plt.legend(['x3','Mu',par],loc='upper right')
+plt.legend(['x3','Mu',par],loc='best')
 
 #plt.plot(tf,MAf[:,-3:]) # plot v and x3
 #plt.ylabel('Y(t)')
