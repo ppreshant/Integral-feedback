@@ -15,10 +15,10 @@ k2 = 1; k3 = 1;
 g1 = 2; g2 = 3; g3 = 1;
 du = 1; n = 50
 # control parameters
-mu = 3; al = 2.5; km = 1; h = 1; k4 = 0; k = .1;
+mu = 3; al = 2.5; km = .1; h = 1; k4 = 0; k = .1;
 
 tmul = 100 ; # time to equilibriate the disturbances
-par = 'al' # parameter of interest - under perturbation
+par = 'k2' # parameter of interest - under perturbation
 dp = {'k': k,'k2': k2,'k3': k3,'g1': g1,'g2': g2,'g3': g3,'du' : du, 'mu' : mu,'al':al,'n' : n, }
 
 # Solving the ODEs for the reaction given the rate consts
@@ -27,12 +27,12 @@ def OdeReact(t0,t1,X0, dp,par):
     [k3,k2,te,g3,g2,g1,k,du,mu,n] = dp.values() # order here is important
     def deriv(X, t):
 
-        Ab = np.array([[-g1,    0,    0,    0],  
+        Ab = np.array([[-g1,    0,    0,    al],  
                    [ k2, -(g2 + k3),  0,    0],
                    [ 0,     k3,      -g3,   0],
                    [ 0,     0,   -al*X[3],  -k4]])         
                  
-        c = np.array([du + k*pow(X[3]/km,h)/(1+pow(X[3]/km,h)) , 0, 0 , al*mu])      # constant production terms            
+        c = np.array([du  , 0, 0 , al*mu * k*1/(1+pow(X[3]/km,h))])      # constant production terms            
         return np.dot(Ab, X) + c
 
     time = np.linspace(t0, t1, t1 - t0 + 1)
@@ -51,7 +51,7 @@ time1, MA1, sp1, p1 = OdeReact(0,tmul,X0,dp,par)
 
 # second step
 
-dp[par] = dp[par]*10
+dp[par] = dp[par]*2
 time2, MA2, sp2, p2 = OdeReact(tmul,2*tmul,MA1[-1],dp,par)
 
 
